@@ -179,7 +179,7 @@ function cardDetails(event) {
     itemContainer.append(itemRow1);
 
     let ingredientLines = document.createElement("div");
-    ingredientLines.classList.add("col-12", "p-3", "m-1", "justify-content-center", "d-flex", "gap-2", "align-items-start", "rounded-4", "border", "border-light", "flex-column", "shadow");
+    ingredientLines.classList.add("col-md-10", "col-sm-11", "p-3", "m-1", "justify-content-center", "d-flex", "gap-2", "align-items-start", "rounded-4", "border", "border-light", "flex-column", "shadow");
     ingredientLines.style.backgroundColor = "rgba(248,249,250,.5)";
     for(let i = 0; i < breakfasts[index].recipe.ingredientLines.length; i++) {
         let ingredientLine = document.createElement("span");
@@ -190,6 +190,8 @@ function cardDetails(event) {
 
     itemContainer.append(ingredientLines);
 
+    // loadingContainer.remove();
+    // fullCardTitle.remove();
     fullCard.append(itemContainer);
 }
 
