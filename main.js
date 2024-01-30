@@ -83,23 +83,114 @@ function cardDetails(event) {
 
     let fullCard = document.createElement("div");
     let height = document.getElementById("nav").offsetHeight;
-    fullCard.classList.add("fullCard", "w-100", "position-absolute", "d-flex", "flex-column", "justify-content-center", "align-items-center");
+    fullCard.classList.add("fullCard", "w-100", "position-absolute", "d-flex", "flex-column", "justify-content-between", "align-items-center");
     fullCard.setAttribute("id", "fullCard");
     fullCard.style.zIndex = "3";
     fullCard.style.backgroundColor = "rgba(63, 123, 112, .3)";
     fullCard.style.top = `${height}px`;
-    fullCard.style.height = `calc(100% - ${height}px)`;
+    fullCard.style.minHeight = `calc(100% - ${height}px)`;
+    fullCard.style.padding = "10px";
     container.style.display = "none";
     document.getElementById("body").prepend(fullCard);
-    let fullCardTitle = document.createElement("h2");
-    fullCardTitle.style.textAlign = "center";
-    fullCardTitle.style.padding = "5px";
-    fullCardTitle.innerHTML = `Loading recipe details of <p style='color: rgb(0, 185, 25);'>${cardTitle}.</p> Please wait...`;
-    fullCard.append(fullCardTitle);
-    // Create loading div into the fullCard.
-    let loadingContainer = createLoadingDiv(fullCard);
+    // let fullCardTitle = document.createElement("h2");
+    // fullCardTitle.style.textAlign = "center";
+    // fullCardTitle.style.padding = "5px";
+    // fullCardTitle.innerHTML = `Loading recipe details of <p style='color: rgb(0, 185, 25);'>${cardTitle}.</p> Please wait...`;
+    // fullCard.append(fullCardTitle);
+    // // Create loading div into the fullCard.
+    // let loadingContainer = createLoadingDiv(fullCard);
     // Prepare details before show them. Will be removed fullCardTitle and loadingContainer after content is ready.
-    
+    let itemContainer = document.createElement("div");
+    itemContainer.classList.add("d-flex", "position-relative", "justify-content-center", "align-items-center", "rounded-3", "border", "border-dark-subtle", "flex-column", "p-1");
+    itemContainer.style.width = "90%";
+    let itemTitle = document.createElement("h2");
+    itemTitle.style.textAlign = "center";
+    itemTitle.style.padding = "5px";
+    itemTitle.classList.add("col-9", "border-bottom", "border-light");
+    itemTitle.innerText = cardTitle;
+    itemTitle.style.color = "rgb(0, 185, 25)";
+
+    itemContainer.append(itemTitle);
+    let itemRow1 = document.createElement("div");
+    itemRow1.classList.add("row", "w-100", "justify-content-center", "d-flex", "gap-2");
+    let itemImageContainer = document.createElement("div");
+    itemImageContainer.classList.add("col-sm-10", "d-flex", "align-items-center", "justify-content-center");
+    let itemImage = document.createElement("img");
+    itemImage.classList.add("img-thumbnail");
+    itemImage.style.width = "300px";
+    itemImage.setAttribute("src", breakfasts[index].recipe.images.LARGE.url);
+
+    itemImageContainer.append(itemImage);
+
+    itemRow1.append(itemImageContainer);
+
+    let leftCard = document.createElement("div");
+    leftCard.classList.add("col-lg-5", "col-md-10", "col-sm-10", "d-flex", "align-items-center", "flex-column", "rounded-4", "border-light", "border", "p-3", "m-1");
+    let nutritionTitle = document.createElement("h2");
+    nutritionTitle.classList.add("fs-5");
+    nutritionTitle.innerText = "Nutritional Values";
+    leftCard.append(nutritionTitle);
+    let nutritionUl = document.createElement("ul");
+    nutritionUl.classList.add("list-group", "col-12", "overflow-y-auto");
+    nutritionUl.style.height = "300px";
+
+    for (let i = 0; i < breakfasts[index].recipe.digest.length; i++) {
+        let nutritionItem = document.createElement("li");
+        nutritionItem.classList.add("border-bottom", "p-1","d-flex", "justify-content-between", "fs-5", "bg-transparent");
+        let nameOfItem = document.createElement("span");
+        nameOfItem.innerText = breakfasts[index].recipe.digest[i].label;
+        let totalOfItem = document.createElement("span");
+        totalOfItem.innerText = Math.floor(breakfasts[index].recipe.digest[i].total) + " " + breakfasts[index].recipe.digest[i].unit;
+        nutritionItem.append(nameOfItem);
+        nutritionItem.append(totalOfItem);
+        nutritionUl.append(nutritionItem);
+    }
+
+    leftCard.append(nutritionUl);
+
+    itemRow1.append(leftCard);
+
+    let rightCard = document.createElement("div");
+    rightCard.classList.add("col-lg-5", "col-md-10", "col-sm-10", "d-flex", "align-items-center", "flex-column", "rounded-4", "border-light", "border", "p-3", "m-1");
+    let ingredientsTitle = document.createElement("h2");
+    ingredientsTitle.classList.add("fs-5");
+    ingredientsTitle.innerText = "Ingredients";
+    rightCard.append(ingredientsTitle);
+    let ingredientsUl = document.createElement("ul");
+    ingredientsUl.classList.add("list-group", "col-12", "overflow-y-auto");
+    ingredientsUl.style.height = "300px";
+
+    for (let i = 0; i < breakfasts[index].recipe.ingredients.length; i++) {
+        let ingredientsItem = document.createElement("li");
+        ingredientsItem.classList.add("border-bottom", "p-1","d-flex", "justify-content-between", "fs-5", "bg-transparent");
+        let nameOfItem = document.createElement("span");
+        nameOfItem.innerText = breakfasts[index].recipe.ingredients[i].food;
+        let totalOfItem = document.createElement("span");
+        totalOfItem.innerText = breakfasts[index].recipe.ingredients[i].quantity + " " + breakfasts[index].recipe.ingredients[i].measure;
+        ingredientsItem.append(nameOfItem);
+        ingredientsItem.append(totalOfItem);
+        ingredientsUl.append(ingredientsItem);
+    }
+
+    rightCard.append(ingredientsUl);
+
+    itemRow1.append(rightCard);
+
+    itemContainer.append(itemRow1);
+
+    let ingredientLines = document.createElement("div");
+    ingredientLines.classList.add("col-12", "p-3", "m-1", "justify-content-center", "d-flex", "gap-2", "align-items-start", "rounded-4", "border", "border-light", "flex-column", "shadow");
+    ingredientLines.style.backgroundColor = "rgba(248,249,250,.5)";
+    for(let i = 0; i < breakfasts[index].recipe.ingredientLines.length; i++) {
+        let ingredientLine = document.createElement("span");
+        ingredientLine.classList.add("fs-4", "p-3", "d-flex", "w-100");
+        ingredientLine.innerText = `${i+1}: ${breakfasts[index].recipe.ingredientLines[i]}`;
+        ingredientLines.append(ingredientLine);
+    }
+
+    itemContainer.append(ingredientLines);
+
+    fullCard.append(itemContainer);
 }
 
 // Create recipe card
@@ -251,7 +342,7 @@ window.addEventListener('resize', function () {
     let fullCard = document.getElementById("fullCard");
     if (fullCard) {
         let height = document.getElementById("nav").offsetHeight;
-        fullCard.style.height = `calc(100% - ${height}px)`;
+        fullCard.style.minHeight = `calc(100% - ${height}px)`;
         fullCard.style.top = `${height}px`;
     }
 }, true);
