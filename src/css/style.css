@@ -1,0 +1,74 @@
+.loading-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.loading-container .bubble-container {
+    position: absolute;
+    top: calc(50% - 10px / 2);
+    left: calc(50% - 10px / 2);
+    transform-origin: -150% 50%;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+1) {
+    transform: translateX(200%) rotate(-90deg);
+    animation-delay: -1.5s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+2) {
+    transform: translateX(200%) rotate(-45deg);
+    animation-delay: -1.375s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+3) {
+    transform: translateX(200%);
+    animation-delay: -1.25s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+4) {
+    transform: translateX(200%) rotate(45deg);
+    animation-delay: -1.125s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+5) {
+    transform: translateX(200%) rotate(90deg);
+    animation-delay: -1s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+6) {
+    transform: translateX(200%) rotate(135deg);
+    animation-delay: -0.875s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+7) {
+    transform: translateX(200%) rotate(180deg);
+    animation-delay: -0.75s;
+}
+
+.loading-container .bubble-container:nth-of-type(0n+8) {
+    transform: translateX(200%) rotate(225deg);
+    animation-delay: -0.625s;
+}
+
+.loading-container .bubble-container .bubble {
+    background-color: rgb(0, 185, 25);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: loading-bubble 1s infinite;
+    animation-delay: inherit;
+}
+
+@keyframes loading-bubble {
+    0%, 100% {
+        transform: scale(0);
+        box-shadow: 0 0 0px rgba(0, 0, 0, .5);
+    }
+
+    50% {
+        transform: scale(1);
+        box-shadow: 0 0 2px black;
+    }
+    
+}
