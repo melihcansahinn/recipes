@@ -1,8 +1,10 @@
 // Create variables
+let isLoading = false;
+let isError = false;
+let errorDiv;
 let breakfasts;
 let errorMsg;
 let message;
-let checkImgLoads = 0;
 let loadingDiv;
 // Give card id to all cards.
 let cardId = 0;
@@ -14,6 +16,15 @@ container.style.display = "none";
 // main container with id messageHandler will keep our loading and error message in itself.
 let messageHandler = document.getElementById("messageHandler");
 messageHandler.style.position = "relative";
+
+// Error message function
+function errorBox(message) {
+    isError = true;
+    errorDiv = document.createElement("div");
+    errorDiv.style.cssText = "width: 85%; min-height: 150px; background-color: rgba(255, 0, 0, .7); justify-content: center; align-items: center; display: flex; font-size: 25px; color: white; position: absolute; top:10px; left: 50%; transform: translateX(-50%); border-radius: 30px; border: 3px solid #444;";
+    errorDiv.innerText = message;
+    document.getElementById("body").append(errorDiv);
+}
 
 // Create message for info on loading or error.
 function createMessage() {
@@ -205,8 +216,11 @@ function cardDetails(event) {
     });
     // Closing details
     closeButton.addEventListener('click', () => {
-        container.style.display = "flex";
-        fullCard.remove();
+        fullCard.style.cssText += "transition: .5s linear";
+        fullCard.animate({ transform: 'translateX(-100%)', opacity: '0.1' }, 300, 'linear').onfinish = () => {
+            fullCard.remove();
+            container.style.display = "flex";
+        }
     });
 
     let closeMark = document.createElement("i");
@@ -265,123 +279,165 @@ function createCard(id) {
     return card;
 }
 
-createMessage();
+function startFetch() {
+    // Start fetching
+    fetchBreakfast().then(data => {
+        // Parse json data to array
+        breakfasts = JSON.parse(data);
+        // Check if array is null, we use return null if fetch fails.
+        if (breakfasts != null) {
+            // Get module for array length. We use 2 cards in every row.
+            let module = breakfasts.length % 2;
+            // Get row count after module reduced from array
+            let rowCount = (breakfasts.length - module) / 2;
+            // Create rows
+            for (let i = 1; i <= rowCount; i++) {
+                let row = document.createElement("div");
+                row.classList.add("row", "d-flex", "justify-content-between", "gap-4", "my-4", "w-100");
+                // Give an id for append cards later according to ids.
+                row.setAttribute("id", "row-" + i);
+                container.appendChild(row);
+            }
+            // Set first id for row to append cards.
+            let appendCard = 1;
+            // Create 2 cards from array for every row.
+            for (let i = 0; i < breakfasts.length - module; i += 2) {
 
-// Start fetching
-fetchBreakfast().then(data => {
-    // Parse json data to array
-    breakfasts = JSON.parse(data);
-    // Check if array is null, we use return null if fetch fails.
-    if (breakfasts != null) {
-        // Get module for array length. We use 2 cards in every row.
-        let module = breakfasts.length % 2;
-        // Get row count after module reduced from array
-        let rowCount = (breakfasts.length - module) / 2;
-        // Create rows
-        for (let i = 1; i <= rowCount; i++) {
-            let row = document.createElement("div");
-            row.classList.add("row", "d-flex", "justify-content-between", "gap-4", "my-4", "w-100");
-            // Give an id for append cards later according to ids.
-            row.setAttribute("id", "row-" + i);
-            container.appendChild(row);
-        }
-        // Set first id for row to append cards.
-        let appendCard = 1;
-        // Create 2 cards from array for every row.
-        for (let i = 0; i < breakfasts.length - module; i += 2) {
+                // Get Row
+                let row = document.getElementById("row-" + appendCard);
 
-            // Get Row
-            let row = document.getElementById("row-" + appendCard);
-
-            // First Card
-            let card = createCard(cardId);
-            cardId += 1;
-            card.getElementsByTagName("h2")[0].innerText = breakfasts[i].recipe.label;
-
-            card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[i].recipe.image);
-            card.getElementsByTagName("img")[0].setAttribute("width", "150");
-            card.getElementsByTagName("img")[0].setAttribute("height", "150");
-            card.getElementsByTagName("img")[0].classList.add("rounded-5");
-
-            card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[i].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[i].recipe.totalNutrients.ENERC_KCAL.unit;
-
-            card.getElementsByTagName("span")[1].innerText = "Fat: " + Math.floor(breakfasts[i].recipe.totalNutrients.FAT.quantity) + breakfasts[i].recipe.totalNutrients.FAT.unit;
-
-            row.appendChild(card);
-
-            // Second Card
-            card = createCard(cardId);
-            cardId += 1;
-
-            card.getElementsByTagName("h2")[0].innerText = breakfasts[i + 1].recipe.label;
-
-            card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[i + 1].recipe.image);
-            card.getElementsByTagName("img")[0].setAttribute("width", "150");
-            card.getElementsByTagName("img")[0].setAttribute("height", "150");
-            card.getElementsByTagName("img")[0].classList.add("rounded-5");
-
-            card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[i + 1].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[i + 1].recipe.totalNutrients.ENERC_KCAL.unit;
-
-            card.getElementsByTagName("span")[1].innerText = "Fat: " + Math.floor(breakfasts[i + 1].recipe.totalNutrients.FAT.quantity) + breakfasts[i + 1].recipe.totalNutrients.FAT.unit;
-
-            row.appendChild(card);
-
-            // Increase row id to create 3 more cards for next row in every loop.
-            appendCard += 1;
-        }
-        // If module is greater than zero, create new row with remain cards.
-        if (module > 0) {
-            let row = document.createElement("div");
-            row.classList.add("row", "d-flex", "justify-content-evenly", "gap-4", "my-4");
-            row.setAttribute("id", "row-" + appendCard + 1);
-            container.appendChild(row);
-
-            // Create card according to module count. It has to be 1 card because our rows have 2 cards only.
-            // Loop will stay to prevent failures if row column counts changes manually.
-            for (let i = module; i > 0; i--) {
+                // First Card
                 let card = createCard(cardId);
                 cardId += 1;
-                card.getElementsByTagName("h2")[0].innerText = breakfasts[breakfasts.length - module].recipe.label;
+                card.getElementsByTagName("h2")[0].innerText = breakfasts[i].recipe.label;
 
-                card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[breakfasts.length - module].recipe.image);
+                card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[i].recipe.image);
                 card.getElementsByTagName("img")[0].setAttribute("width", "150");
                 card.getElementsByTagName("img")[0].setAttribute("height", "150");
                 card.getElementsByTagName("img")[0].classList.add("rounded-5");
 
-                card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[breakfasts.length - module].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[breakfasts.length - module].recipe.totalNutrients.ENERC_KCAL.unit;
+                card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[i].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[i].recipe.totalNutrients.ENERC_KCAL.unit;
 
-                card.getElementsByTagName("span")[1].innerText = "Fat: " + Math.floor(breakfasts[breakfasts.length - module].recipe.totalNutrients.FAT.quantity) + breakfasts[breakfasts.length - module].recipe.totalNutrients.FAT.unit;
+                card.getElementsByTagName("span")[1].innerText = "Fat: " + Math.floor(breakfasts[i].recipe.totalNutrients.FAT.quantity) + breakfasts[i].recipe.totalNutrients.FAT.unit;
 
                 row.appendChild(card);
 
-                // reduce module by 1
-                module -= 1;
+                // Second Card
+                card = createCard(cardId);
+                cardId += 1;
+
+                card.getElementsByTagName("h2")[0].innerText = breakfasts[i + 1].recipe.label;
+
+                card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[i + 1].recipe.image);
+                card.getElementsByTagName("img")[0].setAttribute("width", "150");
+                card.getElementsByTagName("img")[0].setAttribute("height", "150");
+                card.getElementsByTagName("img")[0].classList.add("rounded-5");
+
+                card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[i + 1].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[i + 1].recipe.totalNutrients.ENERC_KCAL.unit;
+
+                card.getElementsByTagName("span")[1].innerText = "Fat: " + Math.floor(breakfasts[i + 1].recipe.totalNutrients.FAT.quantity) + breakfasts[i + 1].recipe.totalNutrients.FAT.unit;
+
+                row.appendChild(card);
+
+                // Increase row id to create 3 more cards for next row in every loop.
+                appendCard += 1;
+            }
+            // If module is greater than zero, create new row with remain cards.
+            if (module > 0) {
+                let row = document.createElement("div");
+                row.classList.add("row", "d-flex", "justify-content-evenly", "gap-4", "my-4");
+                row.setAttribute("id", "row-" + appendCard + 1);
+                container.appendChild(row);
+
+                // Create card according to module count. It has to be 1 card because our rows have 2 cards only.
+                // Loop will stay to prevent failures if row column counts changes manually.
+                for (let i = module; i > 0; i--) {
+                    let card = createCard(cardId);
+                    cardId += 1;
+                    card.getElementsByTagName("h2")[0].innerText = breakfasts[breakfasts.length - module].recipe.label;
+
+                    card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[breakfasts.length - module].recipe.image);
+                    card.getElementsByTagName("img")[0].setAttribute("width", "150");
+                    card.getElementsByTagName("img")[0].setAttribute("height", "150");
+                    card.getElementsByTagName("img")[0].classList.add("rounded-5");
+
+                    card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[breakfasts.length - module].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[breakfasts.length - module].recipe.totalNutrients.ENERC_KCAL.unit;
+
+                    card.getElementsByTagName("span")[1].innerText = "Fat: " + Math.floor(breakfasts[breakfasts.length - module].recipe.totalNutrients.FAT.quantity) + breakfasts[breakfasts.length - module].recipe.totalNutrients.FAT.unit;
+
+                    row.appendChild(card);
+
+                    // reduce module by 1
+                    module -= 1;
+                }
+            }
+
+            // Create refresh button
+            let refreshButton = document.createElement("div");
+            refreshButton.style.cssText = "position:fixed; left:0; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; border-radius: 0px 30px 30px 0px; border: 1px solid transparent; border-left: 0px; background-color: rgba(0, 223, 162,.7); font-size:25px; font-family: Font Awesome 6 Free; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: .5s all ease-in-out; color: #111; z-index: 4;";
+            let refreshMark = document.createElement("i");
+            refreshMark.classList.add("fa-solid", "fa-arrows-rotate");
+            refreshButton.append(refreshMark);
+            refreshButton.addEventListener("click", resetPage);
+            // Hover Effects
+            refreshButton.addEventListener('mouseover', () => {
+                refreshButton.style.cssText += 'background-color: rgba(0, 223, 162,1); color: white; border-color: #111;';
+            });
+            refreshButton.addEventListener('mouseout', () => {
+                refreshButton.style.cssText += 'background-color: rgba(0, 223, 162,.7); color: #111; border-color: transparent;';
+            });
+
+            document.getElementById("body").prepend(refreshButton);
+
+            // Get all item images except navbar img ( navbar is in an anchor tag )
+            const images = document.querySelectorAll("div>img");
+            // Get images total count
+            let imagesLeft = images.length;
+            // Add load eventlistener to all images and after fully loaded, reduce the number of imageLeft by 1
+            for (const image of images) {
+                image.addEventListener('load', () => {
+                    imagesLeft--;
+                    // If all images are fully loaded, show container and hide loading message
+                    if (imagesLeft === 0) {
+                        message.remove();
+                        loadingDiv.remove();
+                        container.style.display = "flex";
+                        if(errorDiv)
+                            errorDiv.remove();
+                        isLoading = false;
+                        isError = false;
+                    };
+                });
             }
         }
-
-        // Get all item images except navbar img ( navbar is in an anchor tag )
-        const images = document.querySelectorAll("div>img");
-        // Get images total count
-        let imagesLeft = images.length;
-        // Add load eventlistener to all images and after fully loaded, reduce the number of imageLeft by 1
-        for (const image of images) {
-            image.addEventListener('load', () => {
-                imagesLeft--;
-                // If all images are fully loaded, show container and hide loading message
-                if (imagesLeft === 0) {
-                    message.remove();
-                    loadingDiv.remove();
-                    container.style.display = "flex";
-                };
-            });
+        else {
+            // If there is no query fetched from api send error message.
+            errorMsg = 'Oops. Something went wrong.';
+            message.innerText = errorMsg;
         }
+    });
+}
+// Run first functions to load page..
+function resetPage() {
+    if (!isLoading) {
+        isLoading = true;
+        let fullCard = document.getElementById("fullCard");
+        if (fullCard) {
+            fullCard.remove();
+        }
+        container.innerHTML = "";
+        container.style.display = "none";
+        cardId = 0;
+        console.log("fetching started");
+        createMessage();
+        startFetch();
+    }else {
+        if(!isError)
+            errorBox('Loading is in progress.');
     }
-    else {
-        // If there is no query fetched from api send error message.
-        errorMsg = 'Oops. Something went wrong.';
-        message.innerText = errorMsg;
-    }
-});
+}
+
+resetPage();
 
 window.addEventListener('resize', function () {
     let fullCard = document.getElementById("fullCard");
