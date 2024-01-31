@@ -51,6 +51,7 @@ async function fetchBreakfast() {
     return response;
 }
 
+// Loading container function
 function createLoadingDiv(div) {
     if (div) {
         let loadingContainer = document.createElement("div");
@@ -72,6 +73,7 @@ function createLoadingDiv(div) {
     return null;
 }
 
+// Create details of recipe function
 function cardDetails(event) {
     let card = document.getElementById(event.target.closest('.card').id);
     let cardTitle = card.querySelector("h2").innerText;
@@ -83,25 +85,25 @@ function cardDetails(event) {
 
     let fullCard = document.createElement("div");
     let height = document.getElementById("nav").offsetHeight;
-    fullCard.classList.add("fullCard", "w-100", "position-absolute", "d-flex", "flex-column", "justify-content-between", "align-items-center");
+    fullCard.classList.add("fullCard", "w-100", "position-absolute", "d-flex", "flex-column", "justify-content-around", "align-items-center");
     fullCard.setAttribute("id", "fullCard");
     fullCard.style.zIndex = "3";
-    fullCard.style.backgroundColor = "rgba(63, 123, 112, .3)";
     fullCard.style.top = `${height}px`;
     fullCard.style.minHeight = `calc(100% - ${height}px)`;
     fullCard.style.padding = "10px";
     container.style.display = "none";
     document.getElementById("body").prepend(fullCard);
-    // let fullCardTitle = document.createElement("h2");
-    // fullCardTitle.style.textAlign = "center";
-    // fullCardTitle.style.padding = "5px";
-    // fullCardTitle.innerHTML = `Loading recipe details of <p style='color: rgb(0, 185, 25);'>${cardTitle}.</p> Please wait...`;
-    // fullCard.append(fullCardTitle);
-    // // Create loading div into the fullCard.
-    // let loadingContainer = createLoadingDiv(fullCard);
+    let fullCardTitle = document.createElement("h2");
+    fullCardTitle.style.textAlign = "center";
+    fullCardTitle.style.padding = "5px";
+    fullCardTitle.innerHTML = `Loading recipe details of <p style='color: rgb(0, 185, 25);'>${cardTitle}.</p> Please wait...`;
+    fullCard.append(fullCardTitle);
+    // Create loading div into the fullCard.
+    let loadingContainer = createLoadingDiv(fullCard);
     // Prepare details before show them. Will be removed fullCardTitle and loadingContainer after content is ready.
     let itemContainer = document.createElement("div");
     itemContainer.classList.add("d-flex", "position-relative", "justify-content-center", "align-items-center", "rounded-3", "border", "border-dark-subtle", "flex-column", "p-1");
+    itemContainer.style.backgroundColor = "rgba(63, 123, 112, .3)";
     itemContainer.style.width = "90%";
     let itemTitle = document.createElement("h2");
     itemTitle.style.textAlign = "center";
@@ -136,7 +138,7 @@ function cardDetails(event) {
 
     for (let i = 0; i < breakfasts[index].recipe.digest.length; i++) {
         let nutritionItem = document.createElement("li");
-        nutritionItem.classList.add("border-bottom", "p-1","d-flex", "justify-content-between", "fs-5", "bg-transparent");
+        nutritionItem.classList.add("border-bottom", "p-1", "d-flex", "justify-content-between", "fs-5", "bg-transparent");
         let nameOfItem = document.createElement("span");
         nameOfItem.innerText = breakfasts[index].recipe.digest[i].label;
         let totalOfItem = document.createElement("span");
@@ -162,11 +164,11 @@ function cardDetails(event) {
 
     for (let i = 0; i < breakfasts[index].recipe.ingredients.length; i++) {
         let ingredientsItem = document.createElement("li");
-        ingredientsItem.classList.add("border-bottom", "p-1","d-flex", "justify-content-between", "fs-5", "bg-transparent");
+        ingredientsItem.classList.add("border-bottom", "p-1", "d-flex", "justify-content-between", "fs-5", "bg-transparent");
         let nameOfItem = document.createElement("span");
         nameOfItem.innerText = breakfasts[index].recipe.ingredients[i].food;
         let totalOfItem = document.createElement("span");
-        totalOfItem.innerText = breakfasts[index].recipe.ingredients[i].quantity + " " + breakfasts[index].recipe.ingredients[i].measure;
+        totalOfItem.innerText = parseFloat(breakfasts[index].recipe.ingredients[i].quantity.toFixed(2)) + " " + breakfasts[index].recipe.ingredients[i].measure;
         ingredientsItem.append(nameOfItem);
         ingredientsItem.append(totalOfItem);
         ingredientsUl.append(ingredientsItem);
@@ -181,18 +183,29 @@ function cardDetails(event) {
     let ingredientLines = document.createElement("div");
     ingredientLines.classList.add("col-md-10", "col-sm-11", "p-3", "m-1", "justify-content-center", "d-flex", "gap-2", "align-items-start", "rounded-4", "border", "border-light", "flex-column", "shadow");
     ingredientLines.style.backgroundColor = "rgba(248,249,250,.5)";
-    for(let i = 0; i < breakfasts[index].recipe.ingredientLines.length; i++) {
+    for (let i = 0; i < breakfasts[index].recipe.ingredientLines.length; i++) {
         let ingredientLine = document.createElement("span");
         ingredientLine.classList.add("fs-4", "p-3", "d-flex", "w-100");
-        ingredientLine.innerText = `${i+1}: ${breakfasts[index].recipe.ingredientLines[i]}`;
+        ingredientLine.innerText = `${i + 1}: ${breakfasts[index].recipe.ingredientLines[i]}`;
         ingredientLines.append(ingredientLine);
     }
 
     itemContainer.append(ingredientLines);
 
+    // Get item image
+
+    // Add load eventlistener to image and after fully loaded remove loadercontainer
+    if (itemImage) {
+        itemImage.addEventListener('load', () => {
+            // If image are fully loaded, show fullcard after remove loading container and message
+            loadingContainer.remove();
+            fullCardTitle.remove();
+            fullCard.append(itemContainer);
+        });
+    }
+
     // loadingContainer.remove();
     // fullCardTitle.remove();
-    fullCard.append(itemContainer);
 }
 
 // Create recipe card
@@ -316,7 +329,7 @@ fetchBreakfast().then(data => {
             }
         }
 
-        // Get all item images except navbar img ( navar is in an anchor tag )
+        // Get all item images except navbar img ( navbar is in an anchor tag )
         const images = document.querySelectorAll("div>img");
         // Get images total count
         let imagesLeft = images.length;
