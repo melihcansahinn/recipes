@@ -258,13 +258,22 @@ function createCard(id) {
     card.classList.add("card", "p-3", "col-lg-5", "col-md-12", "mb-2", "d-flex", "align-items-center", "justify-content-between", "gap-5");
     card.setAttribute("id", "card-" + id);
     card.style.cursor = "pointer";
+    card.style.transition = "all .5s ease-in-out";
     cardTitle = document.createElement("h2");
     cardTitle.classList.add("fs-4", "text-center");
     card.appendChild(cardTitle);
     cardImg = document.createElement("img");
     cardImg.setAttribute("width", "150");
     cardImg.setAttribute("height", "150");
-    cardImg.classList.add("rounded-5");
+    cardImg.style.cssText += "transition: all .5s ease-in-out; border-radius:30px; box-shadow: 2px 2px 10px rgba(27, 18, 18,.9);";
+    card.addEventListener("mouseover", function() {
+        card.style.cssText += "box-shadow: 0 0 10px rgba(0,0,0,.5); transform: translateY(-10px);";
+        card.querySelector("img").style.cssText += "transform: scale(1.2); border-radius: 50%; box-shadow: 0 0 3px #111;";
+    });
+    card.addEventListener("mouseout", function() {
+        card.style.cssText += "box-shadow: none; transform: none;";
+        card.querySelector("img").style.cssText += "transform: none; border-radius: 30px; box-shadow: 2px 2px 10px rgba(27, 18, 18,.9);";
+    });
     card.appendChild(cardImg);
     let div = document.createElement("div");
     div.classList.add("col", "d-flex", "justify-content-between", "align-items-end", "w-100");
@@ -312,9 +321,6 @@ function startFetch() {
                 card.getElementsByTagName("h2")[0].innerText = breakfasts[i].recipe.label;
 
                 card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[i].recipe.image);
-                card.getElementsByTagName("img")[0].setAttribute("width", "150");
-                card.getElementsByTagName("img")[0].setAttribute("height", "150");
-                card.getElementsByTagName("img")[0].classList.add("rounded-5");
 
                 card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[i].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[i].recipe.totalNutrients.ENERC_KCAL.unit;
 
@@ -329,9 +335,6 @@ function startFetch() {
                 card.getElementsByTagName("h2")[0].innerText = breakfasts[i + 1].recipe.label;
 
                 card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[i + 1].recipe.image);
-                card.getElementsByTagName("img")[0].setAttribute("width", "150");
-                card.getElementsByTagName("img")[0].setAttribute("height", "150");
-                card.getElementsByTagName("img")[0].classList.add("rounded-5");
 
                 card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[i + 1].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[i + 1].recipe.totalNutrients.ENERC_KCAL.unit;
 
@@ -357,9 +360,6 @@ function startFetch() {
                     card.getElementsByTagName("h2")[0].innerText = breakfasts[breakfasts.length - module].recipe.label;
 
                     card.getElementsByTagName("img")[0].setAttribute("src", breakfasts[breakfasts.length - module].recipe.image);
-                    card.getElementsByTagName("img")[0].setAttribute("width", "150");
-                    card.getElementsByTagName("img")[0].setAttribute("height", "150");
-                    card.getElementsByTagName("img")[0].classList.add("rounded-5");
 
                     card.getElementsByTagName("span")[0].innerText = "Calories: " + Math.floor(breakfasts[breakfasts.length - module].recipe.totalNutrients.ENERC_KCAL.quantity) + breakfasts[breakfasts.length - module].recipe.totalNutrients.ENERC_KCAL.unit;
 
