@@ -60,6 +60,54 @@
     animation-delay: inherit;
 }
 
+#logoImg {
+    transition: all .5s ease-in-out;
+    animation: logo-rotate-bounce 8s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+@keyframes logo-rotate-bounce {
+    0% {
+        transform: translateY(0px) rotate(0);    
+    }
+
+    30% {
+        transform: translateY(0px) rotate(360deg);
+    }
+
+    40% {
+        transform: translateY(-10px) rotate(360deg);
+    }
+
+    45% {
+        transform: translateY(0px) rotate(360deg);
+    }
+
+    50% {
+        transform: translateY(0px) rotate(375deg);
+    }
+
+    55% {
+        transform: translateY(0px) rotate(345deg);
+    }
+
+    60% {
+        transform: translateY(0px) rotate(360deg);
+    }
+
+    65% {
+        transform: translateY(-5px) rotate(360deg);
+    }
+
+    70% {
+        transform: translateY(0px) rotate(360deg);
+    }
+
+    100% {
+        transform: translateY(0px) rotate(360deg);
+    }
+}
+
 @keyframes loading-bubble {
     0%, 100% {
         transform: scale(0);
