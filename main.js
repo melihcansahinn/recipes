@@ -49,7 +49,7 @@ async function fetchBreakfast() {
         mealType: 'Breakfast',
         imageSize: 'LARGE',
         random: 'true',
-    }).toString())
+    }))
         .then(response => response.json())
         .then(response => {
             // If there are recipes
@@ -413,7 +413,6 @@ function resetPage() {
         container.innerHTML = "";
         container.style.display = "none";
         cardId = 0;
-        console.log("fetching started");
         createMessage();
         startFetch();
     } else {
