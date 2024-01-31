@@ -21,7 +21,7 @@ messageHandler.style.position = "relative";
 function errorBox(message) {
     isError = true;
     errorDiv = document.createElement("div");
-    errorDiv.style.cssText = "width: 85%; min-height: 150px; background-color: rgba(255, 0, 0, .7); justify-content: center; align-items: center; display: flex; font-size: 25px; color: white; position: absolute; top:10px; left: 50%; transform: translateX(-50%); border-radius: 30px; border: 3px solid #444;";
+    errorDiv.style.cssText = "width: 85%; min-height: 150px; background-color: rgba(255, 0, 0, .7); justify-content: center; align-items: center; display: flex; font-size: 25px; color: white; position: absolute; top:10px; left: 50%; transform: translateX(-50%); border-radius: 30px; border: 3px solid #444; transition: all .5s ease-in-out;";
     errorDiv.innerText = message;
     document.getElementById("body").append(errorDiv);
 }
@@ -372,21 +372,6 @@ function startFetch() {
                 }
             }
 
-            // Create refresh button
-            let refreshButton = document.createElement("div");
-            refreshButton.style.cssText = "position:fixed; left:0; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; border-radius: 0px 30px 30px 0px; border: 1px solid transparent; border-left: 0px; background-color: rgba(0, 223, 162,.7); font-size:25px; font-family: Font Awesome 6 Free; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: .5s all ease-in-out; color: #111; z-index: 4;";
-            let refreshMark = document.createElement("i");
-            refreshMark.classList.add("fa-solid", "fa-arrows-rotate");
-            refreshButton.append(refreshMark);
-            refreshButton.addEventListener("click", resetPage);
-            // Hover Effects
-            refreshButton.addEventListener('mouseover', () => {
-                refreshButton.style.cssText += 'background-color: rgba(0, 223, 162,1); color: white; border-color: #111;';
-            });
-            refreshButton.addEventListener('mouseout', () => {
-                refreshButton.style.cssText += 'background-color: rgba(0, 223, 162,.7); color: #111; border-color: transparent;';
-            });
-
             document.getElementById("body").prepend(refreshButton);
 
             // Get all item images except navbar img ( navbar is in an anchor tag )
@@ -402,7 +387,7 @@ function startFetch() {
                         message.remove();
                         loadingDiv.remove();
                         container.style.display = "flex";
-                        if(errorDiv)
+                        if (errorDiv)
                             errorDiv.remove();
                         isLoading = false;
                         isError = false;
@@ -431,11 +416,26 @@ function resetPage() {
         console.log("fetching started");
         createMessage();
         startFetch();
-    }else {
-        if(!isError)
+    } else {
+        if (!isError)
             errorBox('Loading is in progress.');
     }
 }
+
+// Create refresh button only once
+let refreshButton = document.createElement("div");
+refreshButton.style.cssText = "position:fixed; left:0; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; border-radius: 0px 30px 30px 0px; border: 1px solid transparent; border-left: 0px; background-color: rgba(0, 223, 162,.7); font-size:25px; font-family: Font Awesome 6 Free; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: .5s all ease-in-out; color: #111; z-index: 4;";
+let refreshMark = document.createElement("i");
+refreshMark.classList.add("fa-solid", "fa-arrows-rotate");
+refreshButton.append(refreshMark);
+refreshButton.addEventListener("click", resetPage);
+// Hover Effects
+refreshButton.addEventListener('mouseover', () => {
+    refreshButton.style.cssText += 'background-color: rgba(0, 223, 162,1); color: white; border-color: #111;';
+});
+refreshButton.addEventListener('mouseout', () => {
+    refreshButton.style.cssText += 'background-color: rgba(0, 223, 162,.7); color: #111; border-color: transparent;';
+});
 
 resetPage();
 
