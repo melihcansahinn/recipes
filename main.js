@@ -91,6 +91,7 @@ function cardDetails(event) {
     fullCard.style.top = `${height}px`;
     fullCard.style.minHeight = `calc(100% - ${height}px)`;
     fullCard.style.padding = "10px";
+    fullCard.style.overflow = "hidden";
     container.style.display = "none";
     document.getElementById("body").prepend(fullCard);
     let fullCardTitle = document.createElement("h2");
@@ -105,6 +106,7 @@ function cardDetails(event) {
     itemContainer.classList.add("d-flex", "position-relative", "justify-content-center", "align-items-center", "rounded-3", "border", "border-dark-subtle", "flex-column", "p-1");
     itemContainer.style.backgroundColor = "rgba(63, 123, 112, .3)";
     itemContainer.style.width = "90%";
+    itemContainer.style.overflow = "hidden";
     let itemTitle = document.createElement("h2");
     itemTitle.style.textAlign = "center";
     itemTitle.style.padding = "5px";
@@ -192,6 +194,28 @@ function cardDetails(event) {
 
     itemContainer.append(ingredientLines);
 
+    let closeButton = document.createElement("div");
+    closeButton.style.cssText = "position: absolute; right: 10px; top: 10px; width: 30px; height: 30px; background-color: rgba(0,0,0,.5); display: flex; justify-content: center; align-items: center; over-flow: hidden; cursor: pointer; color: white; transition: all .2s ease-in-out; border-radius: 5px; border: 1px solid transparent;";
+    // Hover Effects
+    closeButton.addEventListener('mouseover', () => {
+        closeButton.style.cssText += 'background-color: rgba(255,255,255,.5); color: #111; border-color: #111;';
+    });
+    closeButton.addEventListener('mouseout', () => {
+        closeButton.style.cssText += 'background-color: rgba(0,0,0,.5); color: white; border-color: transparent;';
+    });
+    // Closing details
+    closeButton.addEventListener('click', () => {
+        container.style.display = "flex";
+        fullCard.remove();
+    });
+
+    let closeMark = document.createElement("i");
+    closeMark.classList.add("fa-solid", "fa-x");
+    closeMark.style.cssText = "font-size: 20px; font-family: 'Font Awesome 6 Free';";
+    closeButton.append(closeMark);
+
+    itemContainer.append(closeButton);
+
     // Get item image
 
     // Add load eventlistener to image and after fully loaded remove loadercontainer
@@ -201,6 +225,12 @@ function cardDetails(event) {
             loadingContainer.remove();
             fullCardTitle.remove();
             fullCard.append(itemContainer);
+            itemImage.style.cssText += "transform: translateX(-300%); opacity: 0.2;";
+            itemImage.animate({ opacity: 1 }, 500);
+            itemImage.animate({ transform: 'translateX(0)' }, 250).onfinish = () => {
+                itemImage.style.cssText += "transform: translateX(0%); opacity: 1;";
+            };
+
         });
     }
 
