@@ -54,7 +54,7 @@ async function fetchBreakfast() {
         .then(response => {
             // If there are recipes
             if (response.hits.length > 0)
-                return JSON.stringify(response.hits);
+                return response.hits;
             // or not send null to array
             else
                 return null;
@@ -291,8 +291,7 @@ function createCard(id) {
 function startFetch() {
     // Start fetching
     fetchBreakfast().then(data => {
-        // Parse json data to array
-        breakfasts = JSON.parse(data);
+        breakfasts = data;
         // Check if array is null, we use return null if fetch fails.
         if (breakfasts != null) {
             // Get module for array length. We use 2 cards in every row.
